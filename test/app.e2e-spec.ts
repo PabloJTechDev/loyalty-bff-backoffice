@@ -50,6 +50,7 @@ describe('AppController (e2e)', () => {
     expect(response.body.kpis.length).toBeGreaterThan(0);
     expect(response.body.customerSnapshots.length).toBeGreaterThan(0);
     expect(response.body.recentOrders.length).toBeGreaterThan(0);
+    expect(Array.isArray(response.body.recentPointFlows)).toBe(true);
     expect(response.body.integrations.coreBackoffice.available).toBe(false);
     expect(response.body.integrations.corePoints.available).toBe(false);
   });

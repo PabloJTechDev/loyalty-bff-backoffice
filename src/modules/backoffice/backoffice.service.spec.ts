@@ -10,6 +10,9 @@ describe('BackofficeService', () => {
   };
   const liveCorePointsClient = {
     getHealth: jest.fn().mockResolvedValue({ available: true, mode: 'live', baseUrl: 'http://localhost:3001', checkedAt: '2026-06-05T00:00:00Z' }),
+    listEnrollments: jest.fn().mockResolvedValue([{ transactionId: 'tx_001', customerEmailHash: 'hash', receivedAt: '2026-06-05T10:00:00Z', source: 'bff-points', stage: 'core_received' }]),
+    listPasswordChanges: jest.fn().mockResolvedValue([{ requestId: 'req_001', transactionId: 'tx_001', customerEmailHash: 'hash', requestedAt: '2026-06-05T11:00:00Z', source: 'bff-points', stage: 'password_change_requested' }]),
+    listLogins: jest.fn().mockResolvedValue([{ loginId: 'login_001', requestId: 'req_001', transactionId: 'tx_001', customerEmailHash: 'hash', authenticatedAt: '2026-06-05T12:00:00Z', source: 'bff-points', stage: 'authenticated' }]),
     getCustomerProfileSummary: jest.fn().mockImplementation(async (customerId: string) => ({
       customerId,
       customerEmailHash: 'hash',
@@ -43,6 +46,7 @@ describe('BackofficeService', () => {
     expect(response.customerSnapshots[1].status).toBe('password-reset-pending');
     expect(response.integrations?.coreBackoffice?.available).toBe(true);
     expect(response.integrations?.corePoints?.available).toBe(true);
+    expect(response.recentPointFlows?.length).toBe(3);
   });
 
   it('returns a customer snapshot enriched from core-points', async () => {

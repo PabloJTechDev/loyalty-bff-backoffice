@@ -11,6 +11,15 @@ export interface BackofficeQueueDto {
   sla: string;
 }
 
+export interface BackofficePointsTraceDto {
+  type: 'enrollment' | 'password_change' | 'login';
+  referenceId: string;
+  customerEmailHash: string;
+  stage: string;
+  source: string;
+  happenedAt: string;
+}
+
 export interface BackofficeCustomerSnapshotDto {
   customerId: string;
   fullName: string;
@@ -51,6 +60,7 @@ export interface BackofficeDashboardResponseDto {
   recentOrders: BackofficeOrderSnapshotDto[];
   capabilities?: BackofficeCapabilityDto[];
   operationalAlerts?: BackofficeOperationalAlertDto[];
+  recentPointFlows?: BackofficePointsTraceDto[];
   integrations?: {
     coreBackoffice?: {
       available: boolean;

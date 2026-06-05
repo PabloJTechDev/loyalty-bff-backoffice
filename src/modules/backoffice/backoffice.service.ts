@@ -3,6 +3,7 @@ import type {
   BackofficeCustomerDetailDto,
   BackofficeCustomerSnapshotDto,
   BackofficeDashboardResponseDto,
+  BackofficePointsTraceDto,
 } from './dto/backoffice-dashboard.dto';
 import { backofficeDashboardMock } from './mocks/backoffice.mock';
 import { CoreBackofficeClient } from './clients/core-backoffice.client';
@@ -37,10 +38,11 @@ export class BackofficeService {
       this.corePointsClient.getHealth(),
     ]);
 
-    const [capabilities, operationalAlerts, customerSnapshots] = await Promise.all([
+    const [capabilities, operationalAlerts, customerSnapshots, recentPointFlows] = await Promise.all([
       this.getCapabilities(coreBackoffice.available),
       this.getOperationalAlerts(coreBackoffice.available),
       this.getCustomerSnapshots(corePoints.available),
+      this.getRecentPointFlows(corePoints.available),
     ]);
 
     return {
@@ -50,6 +52,7 @@ export class BackofficeService {
       customerSnapshots,
       capabilities,
       operationalAlerts,
+      recentPointFlows,
       integrations: {
         coreBackoffice,
         corePoints,
@@ -94,6 +97,48 @@ export class BackofficeService {
     if (!enabled) return [];
     const operationalAlerts = await this.coreBackofficeClient.getOperationalAlerts();
     return operationalAlerts.items;
+  }
+
+
+  private async getRecentPointFlows(enabled: boolean): Promise<BackofficePointsTraceDto[]> {
+    if (!enabled) return [];
+
+    try {
+      const [enrollments, passwordChanges, logins] = await Promise.all([
+        this.corePointsClient.listEnrollments(),
+        this.corePointsClient.listPasswordChanges(),
+        this.corePointsClient.listLogins(),
+      ]);
+
+      return [
+        ...enrollments.map((item) => ({
+          type: 'enrollment' as const,
+          referenceId: item.transactionId,
+          customerEmailHash: item.customerEmailHash,
+          stage: item.stage,
+          source: item.source,
+          happenedAt: item.receivedAt,
+        })),
+        ...passwordChanges.map((item) => ({
+          type: 'password_change' as const,
+          referenceId: item.requestId,
+          customerEmailHash: item.customerEmailHash,
+          stage: item.stage,
+          source: item.source,
+          happenedAt: item.requestedAt,
+        })),
+        ...logins.map((item) => ({
+          type: 'login' as const,
+          referenceId: item.loginId,
+          customerEmailHash: item.customerEmailHash,
+          stage: item.stage,
+          source: item.source,
+          happenedAt: item.authenticatedAt,
+        })),
+      ].sort((a, b) => b.happenedAt.localeCompare(a.happenedAt)).slice(0, 6);
+    } catch {
+      return [];
+    }
   }
 
   private async getCustomerSnapshots(enabled: boolean): Promise<BackofficeCustomerSnapshotDto[]> {
