@@ -53,6 +53,13 @@ export interface BackofficeDashboardResponseDto {
       checkedAt: string;
       error?: string;
     };
+    coreEcommerce?: {
+      available: boolean;
+      mode: string;
+      baseUrl?: string;
+      checkedAt: string;
+      error?: string;
+    };
   };
 }
 

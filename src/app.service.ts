@@ -28,6 +28,7 @@ export class AppService {
         },
         coreBackoffice: summary.coreBackoffice,
         corePoints: summary.corePoints,
+        coreEcommerce: summary.coreEcommerce,
       },
       capabilities: {
         monitoredCustomers: summary.monitoredCustomers,

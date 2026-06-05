@@ -7,8 +7,8 @@ describe('BackofficeController', () => {
   beforeEach(() => {
     const backofficeService = {
       getDashboard: jest.fn().mockResolvedValue({ source: 'mock', kpis: [] }),
-      getCustomerSnapshot: jest.fn().mockImplementation((customerId: string) => ({ source: 'mock', item: { customerId } })),
-      getOrderSnapshot: jest.fn().mockImplementation((orderId: string) => ({ source: 'mock', item: { orderId } })),
+      getCustomerSnapshot: jest.fn().mockResolvedValue({ source: 'mock', item: { customerId: 'cust_001' } }),
+      getOrderSnapshot: jest.fn().mockResolvedValue({ source: 'mock', item: { orderId: 'ord_mock_002' } }),
     } as unknown as BackofficeService;
 
     controller = new BackofficeController(backofficeService);
@@ -18,11 +18,11 @@ describe('BackofficeController', () => {
     await expect(controller.getDashboard()).resolves.toEqual({ source: 'mock', kpis: [] });
   });
 
-  it('returns customer snapshot', () => {
-    expect(controller.getCustomerSnapshot('cust_001')).toEqual({ source: 'mock', item: { customerId: 'cust_001' } });
+  it('returns customer snapshot', async () => {
+    await expect(controller.getCustomerSnapshot('cust_001')).resolves.toEqual({ source: 'mock', item: { customerId: 'cust_001' } });
   });
 
-  it('returns order snapshot', () => {
-    expect(controller.getOrderSnapshot('ord_mock_002')).toEqual({ source: 'mock', item: { orderId: 'ord_mock_002' } });
+  it('returns order snapshot', async () => {
+    await expect(controller.getOrderSnapshot('ord_mock_002')).resolves.toEqual({ source: 'mock', item: { orderId: 'ord_mock_002' } });
   });
 });
