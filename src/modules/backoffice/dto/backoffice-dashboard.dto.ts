@@ -20,37 +20,13 @@ export interface BackofficeCustomerSnapshotDto {
   lastOrderId: string;
 }
 
-export interface BackofficeOrderLineDto {
-  productId: string;
-  sku: string;
-  name: string;
-  quantity: number;
-  unitPriceUsd: number;
-  lineSubtotalUsd: number;
-  categoryId: string;
-  categoryName: string;
-}
-
-export interface BackofficeOrderSummaryDto {
-  itemCount: number;
-  subtotalUsd: number;
-  requestedPoints: number;
-  reservedPoints: number;
-  coveredUsd: number;
-  payableUsd: number;
-}
-
 export interface BackofficeOrderSnapshotDto {
   orderId: string;
   customerId: string;
-  reservationId?: string;
   status: string;
-  currency?: string;
   payableUsd: number;
   reservedPoints: number;
   createdAt: string;
-  lines?: BackofficeOrderLineDto[];
-  summary?: BackofficeOrderSummaryDto;
 }
 
 export interface BackofficeDashboardResponseDto {
@@ -71,13 +47,6 @@ export interface BackofficeDashboardResponseDto {
       error?: string;
     };
     corePoints?: {
-      available: boolean;
-      mode: string;
-      baseUrl?: string;
-      checkedAt: string;
-      error?: string;
-    };
-    coreEcommerce?: {
       available: boolean;
       mode: string;
       baseUrl?: string;

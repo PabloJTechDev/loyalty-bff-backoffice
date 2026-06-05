@@ -9,7 +9,6 @@ describe('AppController (e2e)', () => {
   beforeEach(async () => {
     process.env.CORE_BACKOFFICE_BASE_URL = 'http://127.0.0.1:3995';
     process.env.CORE_POINTS_BASE_URL = 'http://127.0.0.1:3991';
-    process.env.CORE_ECOMMERCE_BASE_URL = 'http://127.0.0.1:3996';
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -40,7 +39,6 @@ describe('AppController (e2e)', () => {
         backofficeEngine: { available: true, mode: 'fallback' },
         coreBackoffice: { available: false, mode: 'fallback' },
         corePoints: { available: false, mode: 'fallback' },
-        coreEcommerce: { available: false, mode: 'fallback' },
       },
     });
   });
@@ -54,7 +52,6 @@ describe('AppController (e2e)', () => {
     expect(response.body.recentOrders.length).toBeGreaterThan(0);
     expect(response.body.integrations.coreBackoffice.available).toBe(false);
     expect(response.body.integrations.corePoints.available).toBe(false);
-    expect(response.body.integrations.coreEcommerce.available).toBe(false);
   });
 
   it('/api/v1/backoffice/customers/:customerId (GET)', async () => {
@@ -68,6 +65,5 @@ describe('AppController (e2e)', () => {
     const httpServer = app.getHttpServer() as Parameters<typeof request>[0];
     const response = await request(httpServer).get('/api/v1/backoffice/orders/ord_mock_002').expect(200);
     expect(response.body.item).toMatchObject({ orderId: 'ord_mock_002', status: 'placed' });
-    expect(response.body.integrations.coreEcommerce.available).toBe(false);
   });
 });
