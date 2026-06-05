@@ -91,15 +91,12 @@ export class BackofficeService {
 
     if (coreEcommerce.available) {
       try {
-        const liveOrders = await this.coreEcommerceClient.getOrders();
-        const liveOrder = liveOrders.find((item) => item.orderId === orderId);
-        if (liveOrder) {
-          return {
-            source: 'mock' as const,
-            item: this.mergeOrderSnapshot(mockOrder, liveOrder),
-            integrations: { coreEcommerce },
-          };
-        }
+        const liveOrder = await this.coreEcommerceClient.getOrderById(orderId);
+        return {
+          source: 'mock' as const,
+          item: this.mergeOrderSnapshot(mockOrder, liveOrder),
+          integrations: { coreEcommerce },
+        };
       } catch {
         if (mockOrder) {
           return { source: 'mock' as const, item: mockOrder, integrations: { coreEcommerce } };

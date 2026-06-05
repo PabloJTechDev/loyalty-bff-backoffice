@@ -52,4 +52,9 @@ export class CoreEcommerceClient {
     const response = await firstValueFrom(this.httpService.get(`${this.baseUrl}/v1/orders`, { timeout: 1500 }));
     return (response.data?.items ?? []) as CoreEcommerceOrderDto[];
   }
+
+  async getOrderById(orderId: string): Promise<CoreEcommerceOrderDto> {
+    const response = await firstValueFrom(this.httpService.get(`${this.baseUrl}/v1/orders/${orderId}`, { timeout: 1500 }));
+    return response.data as CoreEcommerceOrderDto;
+  }
 }
