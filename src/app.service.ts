@@ -13,8 +13,8 @@ export class AppService {
     };
   }
 
-  getReadiness() {
-    const summary = this.backofficeService.getStatusSummary();
+  async getReadiness() {
+    const summary = await this.backofficeService.getStatusSummary();
 
     return {
       status: 'ready',
@@ -26,10 +26,7 @@ export class AppService {
           available: true,
           mode: summary.mode,
         },
-        coreBackoffice: {
-          available: false,
-          mode: 'pending',
-        },
+        coreBackoffice: summary.coreBackoffice,
         corePoints: {
           available: false,
           mode: 'pending',

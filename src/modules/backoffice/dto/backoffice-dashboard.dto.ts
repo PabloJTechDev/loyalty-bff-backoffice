@@ -36,4 +36,32 @@ export interface BackofficeDashboardResponseDto {
   queues: BackofficeQueueDto[];
   customerSnapshots: BackofficeCustomerSnapshotDto[];
   recentOrders: BackofficeOrderSnapshotDto[];
+  capabilities?: BackofficeCapabilityDto[];
+  operationalAlerts?: BackofficeOperationalAlertDto[];
+  integrations?: {
+    coreBackoffice?: {
+      available: boolean;
+      mode: string;
+      baseUrl?: string;
+      checkedAt: string;
+      error?: string;
+    };
+  };
+}
+
+export interface BackofficeCapabilityDto {
+  capabilityId: string;
+  title: string;
+  description: string;
+  dependsOn: string[];
+  status: string;
+}
+
+export interface BackofficeOperationalAlertDto {
+  alertId: string;
+  severity: string;
+  title: string;
+  description: string;
+  domain: string;
+  status: string;
 }

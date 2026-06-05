@@ -6,7 +6,7 @@ describe('BackofficeController', () => {
 
   beforeEach(() => {
     const backofficeService = {
-      getDashboard: jest.fn().mockReturnValue({ source: 'mock', kpis: [] }),
+      getDashboard: jest.fn().mockResolvedValue({ source: 'mock', kpis: [] }),
       getCustomerSnapshot: jest.fn().mockImplementation((customerId: string) => ({ source: 'mock', item: { customerId } })),
       getOrderSnapshot: jest.fn().mockImplementation((orderId: string) => ({ source: 'mock', item: { orderId } })),
     } as unknown as BackofficeService;
@@ -14,8 +14,8 @@ describe('BackofficeController', () => {
     controller = new BackofficeController(backofficeService);
   });
 
-  it('returns dashboard', () => {
-    expect(controller.getDashboard()).toEqual({ source: 'mock', kpis: [] });
+  it('returns dashboard', async () => {
+    await expect(controller.getDashboard()).resolves.toEqual({ source: 'mock', kpis: [] });
   });
 
   it('returns customer snapshot', () => {

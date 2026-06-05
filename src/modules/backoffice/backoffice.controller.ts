@@ -7,7 +7,7 @@ export class BackofficeController {
   constructor(private readonly backofficeService: BackofficeService) {}
 
   @Get('dashboard')
-  getDashboard(): BackofficeDashboardResponseDto {
+  getDashboard(): Promise<BackofficeDashboardResponseDto> {
     return this.backofficeService.getDashboard();
   }
 

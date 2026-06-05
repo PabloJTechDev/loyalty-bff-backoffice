@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HttpMetricsMiddleware } from './common/metrics/http-metrics.middleware';
@@ -11,6 +12,7 @@ import { BackofficeModule } from './modules/backoffice/backoffice.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    HttpModule,
     BackofficeModule,
   ],
   controllers: [AppController],
