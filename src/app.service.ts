@@ -27,10 +27,7 @@ export class AppService {
           mode: summary.mode,
         },
         coreBackoffice: summary.coreBackoffice,
-        corePoints: {
-          available: false,
-          mode: 'pending',
-        },
+        corePoints: summary.corePoints,
       },
       capabilities: {
         monitoredCustomers: summary.monitoredCustomers,

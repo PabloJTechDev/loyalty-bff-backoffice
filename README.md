@@ -4,12 +4,12 @@ BFF del backoffice de la loyalty platform.
 
 ## Propósito
 Exponer payloads operativos orientados a backoffice.
-Actualmente agrega dashboard mock local y lectura real desde `loyalty-core-backoffice` cuando está disponible.
-También debe integrarse más adelante con:
-- `loyalty-core-points`
+Actualmente agrega dashboard mock local y lectura real desde:
+- `loyalty-core-backoffice` para capacidades y alertas operativas
+- `loyalty-core-points` para perfiles/snapshots de cliente
 
 ## Estado
-Bootstrap funcional con fallback seguro y primera integración real hacia `core-backoffice`.
+Bootstrap funcional con fallback seguro y primeras integraciones reales cross-core.
 
 ## Endpoints actuales
 - GET /api/health
