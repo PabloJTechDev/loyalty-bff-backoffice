@@ -49,6 +49,9 @@ describe('BackofficeService', () => {
     const response = await service.getCustomerSnapshot('cust_001');
     expect(response.item.fullName).toBe('María Pérez');
     expect(response.item.tier).toBe('Platinum');
+    expect(response.item.enrollmentTransactionId).toBe('tx_001');
+    expect(response.item.passwordChangeRequestId).toBe('req_001');
+    expect(response.item.lastLoginId).toBe('login_001');
     expect(response.integrations.corePoints.available).toBe(true);
   });
 

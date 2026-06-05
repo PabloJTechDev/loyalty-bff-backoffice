@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type {
+  BackofficeCustomerDetailDto,
   BackofficeCustomerSnapshotDto,
   BackofficeDashboardResponseDto,
 } from './dto/backoffice-dashboard.dto';
@@ -62,18 +63,18 @@ export class BackofficeService {
 
     const corePoints = await this.corePointsClient.getHealth();
     if (!corePoints.available) {
-      return { source: 'mock' as const, item: customer, integrations: { corePoints } };
+      return { source: 'mock' as const, item: this.toCustomerDetail(customer), integrations: { corePoints } };
     }
 
     try {
       const profile = await this.corePointsClient.getCustomerProfileSummary(customerId);
       return {
         source: 'mock' as const,
-        item: this.mergeCustomerSnapshot(customer, profile),
+        item: this.mergeCustomerDetail(customer, profile),
         integrations: { corePoints },
       };
     } catch {
-      return { source: 'mock' as const, item: customer, integrations: { corePoints } };
+      return { source: 'mock' as const, item: this.toCustomerDetail(customer), integrations: { corePoints } };
     }
   }
 
@@ -120,6 +121,29 @@ export class BackofficeService {
       status: profile.passwordChangeStatus === 'pending'
         ? 'password-reset-pending'
         : profile.enrollmentStatus || profile.stage || customer.status,
+    };
+  }
+
+  private toCustomerDetail(customer: BackofficeCustomerSnapshotDto): BackofficeCustomerDetailDto {
+    return {
+      ...customer,
+    };
+  }
+
+  private mergeCustomerDetail(customer: BackofficeCustomerSnapshotDto, profile: CorePointsProfileSummaryDto): BackofficeCustomerDetailDto {
+    const base = this.mergeCustomerSnapshot(customer, profile);
+    return {
+      ...base,
+      customerEmailHash: profile.customerEmailHash,
+      enrollmentStatus: profile.enrollmentStatus,
+      enrollmentTransactionId: profile.enrollmentTransactionId,
+      passwordChangeStatus: profile.passwordChangeStatus,
+      passwordChangeRequestId: profile.passwordChangeRequestId,
+      lastLoginId: profile.lastLoginId,
+      lastLoginAt: profile.lastLoginAt,
+      source: profile.source,
+      stage: profile.stage,
+      updatedAt: profile.updatedAt,
     };
   }
 }

@@ -20,6 +20,19 @@ export interface BackofficeCustomerSnapshotDto {
   lastOrderId: string;
 }
 
+export interface BackofficeCustomerDetailDto extends BackofficeCustomerSnapshotDto {
+  customerEmailHash?: string;
+  enrollmentStatus?: string;
+  enrollmentTransactionId?: string;
+  passwordChangeStatus?: string;
+  passwordChangeRequestId?: string;
+  lastLoginId?: string;
+  lastLoginAt?: string;
+  source?: string;
+  stage?: string;
+  updatedAt?: string;
+}
+
 export interface BackofficeOrderSnapshotDto {
   orderId: string;
   customerId: string;
