@@ -10,6 +10,16 @@ export interface CoreEcommerceOrderDto {
   status: string;
   currency?: string;
   createdAt: string;
+  lines?: Array<{
+    productId: string;
+    sku: string;
+    name: string;
+    quantity: number;
+    unitPriceUsd: number;
+    lineSubtotalUsd: number;
+    categoryId: string;
+    categoryName: string;
+  }>;
   summary?: {
     itemCount: number;
     subtotalUsd: number;

@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import type {
   BackofficeCustomerSnapshotDto,
   BackofficeDashboardResponseDto,
+  BackofficeOrderSnapshotDto,
 } from './dto/backoffice-dashboard.dto';
 import { backofficeDashboardMock } from './mocks/backoffice.mock';
 import { CoreBackofficeClient } from './clients/core-backoffice.client';
@@ -151,14 +152,21 @@ export class BackofficeService {
     return mergedSnapshots;
   }
 
-  private mergeOrderSnapshot(mockOrder: BackofficeDashboardResponseDto['recentOrders'][number] | undefined, liveOrder: CoreEcommerceOrderDto) {
+  private mergeOrderSnapshot(
+    mockOrder: BackofficeDashboardResponseDto['recentOrders'][number] | undefined,
+    liveOrder: CoreEcommerceOrderDto,
+  ): BackofficeOrderSnapshotDto {
     return {
       orderId: liveOrder.orderId,
       customerId: mockOrder?.customerId ?? 'unassigned',
+      reservationId: liveOrder.reservationId,
       status: liveOrder.status || mockOrder?.status || 'placed',
+      currency: liveOrder.currency ?? 'USD',
       payableUsd: liveOrder.summary?.payableUsd ?? mockOrder?.payableUsd ?? 0,
       reservedPoints: liveOrder.summary?.reservedPoints ?? mockOrder?.reservedPoints ?? 0,
       createdAt: liveOrder.createdAt ?? mockOrder?.createdAt ?? new Date().toISOString(),
+      lines: liveOrder.lines,
+      summary: liveOrder.summary,
     };
   }
 
