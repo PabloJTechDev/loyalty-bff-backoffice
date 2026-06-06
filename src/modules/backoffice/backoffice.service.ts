@@ -3,11 +3,13 @@ import type {
   BackofficeCustomerDetailDto,
   BackofficeCustomerSnapshotDto,
   BackofficeDashboardResponseDto,
+  BackofficeKpiDto,
+  BackofficeQueueDto,
   BackofficePointsTraceDto,
 } from './dto/backoffice-dashboard.dto';
 import { backofficeDashboardMock } from './mocks/backoffice.mock';
 import { CoreBackofficeClient } from './clients/core-backoffice.client';
-import { CorePointsClient, type CorePointsProfileSummaryDto } from './clients/core-points.client';
+import { CorePointsClient, type CorePointsProfileSummaryDto, type CorePointsStatsDto } from './clients/core-points.client';
 
 @Injectable()
 export class BackofficeService {
@@ -38,17 +40,21 @@ export class BackofficeService {
       this.corePointsClient.getHealth(),
     ]);
 
-    const [capabilities, operationalAlerts, customerSnapshots, recentPointFlows] = await Promise.all([
+    const [capabilities, operationalAlerts, customerSnapshots, recentPointFlows, kpis, queues] = await Promise.all([
       this.getCapabilities(coreBackoffice.available),
       this.getOperationalAlerts(coreBackoffice.available),
       this.getCustomerSnapshots(corePoints.available),
       this.getRecentPointFlows(corePoints.available),
+      this.getKpis(corePoints.available),
+      this.getQueues(corePoints.available),
     ]);
 
     return {
       ...backofficeDashboardMock,
-      source: 'mock',
+      source: corePoints.available ? 'live' : 'mock',
       generatedAt: new Date().toISOString(),
+      kpis,
+      queues,
       customerSnapshots,
       capabilities,
       operationalAlerts,
@@ -85,6 +91,33 @@ export class BackofficeService {
     const order = backofficeDashboardMock.recentOrders.find((item) => item.orderId === orderId);
     if (!order) throw new NotFoundException(`Backoffice order ${orderId} not found`);
     return { source: 'mock' as const, item: order };
+  }
+
+  private async getKpis(enabled: boolean): Promise<BackofficeKpiDto[]> {
+    if (!enabled) return backofficeDashboardMock.kpis;
+    try {
+      const stats = await this.corePointsClient.getStats();
+      return [
+        { label: 'Total enrollments', value: String(stats.totalEnrollments), trend: `${stats.pendingEnrollments} pending` },
+        { label: 'Total logins', value: String(stats.totalLogins), trend: 'all time' },
+        { label: 'Password changes', value: String(stats.totalPasswordChanges), trend: `${stats.pendingPasswordChanges} pending` },
+      ];
+    } catch {
+      return backofficeDashboardMock.kpis;
+    }
+  }
+
+  private async getQueues(enabled: boolean): Promise<BackofficeQueueDto[]> {
+    if (!enabled) return backofficeDashboardMock.queues;
+    try {
+      const stats = await this.corePointsClient.getStats();
+      return [
+        { id: 'enrollments', title: 'Enrollment queue', pending: stats.pendingEnrollments, sla: '< 60 min' },
+        { id: 'password-changes', title: 'Password reset queue', pending: stats.pendingPasswordChanges, sla: '< 30 min' },
+      ];
+    } catch {
+      return backofficeDashboardMock.queues;
+    }
   }
 
   private async getCapabilities(enabled: boolean) {

@@ -52,7 +52,7 @@ export interface BackofficeOrderSnapshotDto {
 }
 
 export interface BackofficeDashboardResponseDto {
-  source: 'mock';
+  source: 'mock' | 'live';
   generatedAt: string;
   kpis: BackofficeKpiDto[];
   queues: BackofficeQueueDto[];

@@ -37,6 +37,14 @@ export interface CorePointsPasswordChangeTraceDto {
   stage: string;
 }
 
+export interface CorePointsStatsDto {
+  totalEnrollments: number;
+  totalPasswordChanges: number;
+  totalLogins: number;
+  pendingEnrollments: number;
+  pendingPasswordChanges: number;
+}
+
 export interface CorePointsLoginTraceDto {
   loginId: string;
   requestId: string;
@@ -93,5 +101,10 @@ export class CorePointsClient {
   async listLogins(): Promise<CorePointsLoginTraceDto[]> {
     const response = await firstValueFrom(this.httpService.get(`${this.baseUrl}/v1/customer-logins`, { timeout: 1500 }));
     return (response.data?.items ?? []) as CorePointsLoginTraceDto[];
+  }
+
+  async getStats(): Promise<CorePointsStatsDto> {
+    const response = await firstValueFrom(this.httpService.get(`${this.baseUrl}/v1/stats`, { timeout: 1500 }));
+    return response.data as CorePointsStatsDto;
   }
 }
