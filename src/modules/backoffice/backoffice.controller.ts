@@ -16,6 +16,11 @@ export class BackofficeController {
     return this.backofficeService.getCustomerSnapshot(customerId);
   }
 
+  @Get('customers/:customerId/points')
+  getCustomerPoints(@Param('customerId') customerId: string) {
+    return this.backofficeService.getCustomerPoints(customerId);
+  }
+
   @Get('orders/:orderId')
   getOrderSnapshot(@Param('orderId') orderId: string) {
     return this.backofficeService.getOrderSnapshot(orderId);

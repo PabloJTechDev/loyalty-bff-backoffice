@@ -93,6 +93,19 @@ export class BackofficeService {
     return { source: 'mock' as const, item: order };
   }
 
+  async getCustomerPoints(customerId: string) {
+    const [balance, transactions] = await Promise.all([
+      this.corePointsClient.getCustomerBalance(customerId),
+      this.corePointsClient.getCustomerTransactions(customerId),
+    ]);
+    return {
+      customerId,
+      source: balance ? 'core-points' : 'not_found',
+      balance: balance ?? { customerId, balancePoints: 0, lifetimeAccrued: 0, lifetimeRedeemed: 0, updatedAt: new Date().toISOString() },
+      transactions,
+    };
+  }
+
   private async getKpis(enabled: boolean): Promise<BackofficeKpiDto[]> {
     if (!enabled) return backofficeDashboardMock.kpis;
     try {

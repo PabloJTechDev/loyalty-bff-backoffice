@@ -45,6 +45,25 @@ export interface CorePointsStatsDto {
   pendingPasswordChanges: number;
 }
 
+export interface CorePointsBalanceDto {
+  customerId: string;
+  balancePoints: number;
+  lifetimeAccrued: number;
+  lifetimeRedeemed: number;
+  updatedAt: string;
+}
+
+export interface CorePointsTransactionDto {
+  transactionId: string;
+  customerId: string;
+  type: 'accrue' | 'redeem';
+  points: number;
+  referenceId: string;
+  source: string;
+  description: string;
+  createdAt: string;
+}
+
 export interface CorePointsLoginTraceDto {
   loginId: string;
   requestId: string;
@@ -106,5 +125,23 @@ export class CorePointsClient {
   async getStats(): Promise<CorePointsStatsDto> {
     const response = await firstValueFrom(this.httpService.get(`${this.baseUrl}/v1/stats`, { timeout: 1500 }));
     return response.data as CorePointsStatsDto;
+  }
+
+  async getCustomerBalance(customerId: string): Promise<CorePointsBalanceDto | null> {
+    try {
+      const response = await firstValueFrom(this.httpService.get(`${this.baseUrl}/v1/points/${encodeURIComponent(customerId)}/balance`, { timeout: 1500 }));
+      return response.data as CorePointsBalanceDto;
+    } catch {
+      return null;
+    }
+  }
+
+  async getCustomerTransactions(customerId: string): Promise<CorePointsTransactionDto[]> {
+    try {
+      const response = await firstValueFrom(this.httpService.get(`${this.baseUrl}/v1/points/${encodeURIComponent(customerId)}/transactions`, { timeout: 1500 }));
+      return (response.data?.items ?? []) as CorePointsTransactionDto[];
+    } catch {
+      return [];
+    }
   }
 }
