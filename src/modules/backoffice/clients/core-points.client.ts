@@ -43,6 +43,10 @@ export interface CorePointsStatsDto {
   totalLogins: number;
   pendingEnrollments: number;
   pendingPasswordChanges: number;
+  totalPointsInCirculation: number;
+  totalLifetimeAccrued: number;
+  totalLifetimeRedeemed: number;
+  totalActiveAccounts: number;
 }
 
 export interface CorePointsBalanceDto {

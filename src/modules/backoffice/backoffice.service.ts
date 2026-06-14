@@ -110,10 +110,16 @@ export class BackofficeService {
     if (!enabled) return backofficeDashboardMock.kpis;
     try {
       const stats = await this.corePointsClient.getStats();
+      const inCirculation = stats.totalPointsInCirculation ?? 0;
+      const lifetimeAccrued = stats.totalLifetimeAccrued ?? 0;
+      const lifetimeRedeemed = stats.totalLifetimeRedeemed ?? 0;
+      const activeAccounts = stats.totalActiveAccounts ?? 0;
       return [
         { label: 'Total enrollments', value: String(stats.totalEnrollments), trend: `${stats.pendingEnrollments} pending` },
         { label: 'Total logins', value: String(stats.totalLogins), trend: 'all time' },
         { label: 'Password changes', value: String(stats.totalPasswordChanges), trend: `${stats.pendingPasswordChanges} pending` },
+        { label: 'Points in circulation', value: inCirculation.toLocaleString('en-US'), trend: `${activeAccounts} active accounts` },
+        { label: 'Lifetime accrued', value: lifetimeAccrued.toLocaleString('en-US'), trend: `${lifetimeRedeemed.toLocaleString('en-US')} redeemed` },
       ];
     } catch {
       return backofficeDashboardMock.kpis;
