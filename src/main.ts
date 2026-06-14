@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { logEvent } from './common/logging/json-log';
+import { logEvent } from './shared/logging/json-log';
 
 async function bootstrap() {
   const port = Number(process.env.PORT ?? 3003);

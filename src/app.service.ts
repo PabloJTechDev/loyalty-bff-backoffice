@@ -1,9 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { BackofficeService } from './modules/backoffice/backoffice.service';
+import { CoreBackofficeClient } from './shared/infrastructure/core-backoffice.client';
+import { CorePointsClient } from './shared/infrastructure/core-points.client';
+
+const MONITORED_CUSTOMERS = 2;
+const RECENT_ORDERS = 2;
 
 @Injectable()
 export class AppService {
-  constructor(private readonly backofficeService: BackofficeService) {}
+  constructor(
+    private readonly coreBackofficeClient: CoreBackofficeClient,
+    private readonly corePointsClient: CorePointsClient,
+  ) {}
 
   getHealth() {
     return {
@@ -14,7 +21,12 @@ export class AppService {
   }
 
   async getReadiness() {
-    const summary = await this.backofficeService.getStatusSummary();
+    const [coreBackoffice, corePoints] = await Promise.all([
+      this.coreBackofficeClient.getHealth(),
+      this.corePointsClient.getHealth(),
+    ]);
+
+    const mode = coreBackoffice.available || corePoints.available ? 'live' : 'fallback';
 
     return {
       status: 'ready',
@@ -24,14 +36,14 @@ export class AppService {
       integrations: {
         backofficeEngine: {
           available: true,
-          mode: summary.mode,
+          mode,
         },
-        coreBackoffice: summary.coreBackoffice,
-        corePoints: summary.corePoints,
+        coreBackoffice,
+        corePoints,
       },
       capabilities: {
-        monitoredCustomers: summary.monitoredCustomers,
-        recentOrders: summary.recentOrders,
+        monitoredCustomers: MONITORED_CUSTOMERS,
+        recentOrders: RECENT_ORDERS,
         supportDashboard: true,
       },
     };

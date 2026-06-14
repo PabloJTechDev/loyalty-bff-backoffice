@@ -1,6 +1,11 @@
-import type { BackofficeDashboardResponseDto } from '../dto/backoffice-dashboard.dto';
+import type { CustomerSnapshotData, KpiData, OrderSnapshotData, QueueData } from '../../domain/ports/dashboard.repository';
 
-export const backofficeDashboardMock: Omit<BackofficeDashboardResponseDto, 'source' | 'generatedAt'> = {
+export const backofficeDashboardMock: {
+  kpis: KpiData[];
+  queues: QueueData[];
+  customerSnapshots: CustomerSnapshotData[];
+  recentOrders: OrderSnapshotData[];
+} = {
   kpis: [
     { label: 'Open cases', value: '18', trend: '-2 vs yesterday' },
     { label: 'Orders flagged', value: '5', trend: '+1 last hour' },

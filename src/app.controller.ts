@@ -1,6 +1,6 @@
 import { Controller, Get, Header } from '@nestjs/common';
 import { AppService } from './app.service';
-import { metricsRegistry } from './common/metrics/http-metrics';
+import { metricsRegistry } from './shared/metrics/http-metrics';
 
 @Controller()
 export class AppController {

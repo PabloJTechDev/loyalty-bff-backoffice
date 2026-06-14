@@ -3,8 +3,12 @@ import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { HttpMetricsMiddleware } from './common/metrics/http-metrics.middleware';
-import { BackofficeModule } from './modules/backoffice/backoffice.module';
+import { HttpMetricsMiddleware } from './shared/metrics/http-metrics.middleware';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { CustomersModule } from './modules/customers/customers.module';
+import { OperationsModule } from './modules/operations/operations.module';
+import { CoreBackofficeClient } from './shared/infrastructure/core-backoffice.client';
+import { CorePointsClient } from './shared/infrastructure/core-points.client';
 
 @Module({
   imports: [
@@ -13,10 +17,12 @@ import { BackofficeModule } from './modules/backoffice/backoffice.module';
       envFilePath: '.env',
     }),
     HttpModule,
-    BackofficeModule,
+    DashboardModule,
+    CustomersModule,
+    OperationsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, CoreBackofficeClient, CorePointsClient],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

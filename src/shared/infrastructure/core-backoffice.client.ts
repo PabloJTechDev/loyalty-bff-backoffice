@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
-import type { IntegrationStatusDto } from '../../../common/dto/integration-status.dto';
+import type { IntegrationStatusDto } from '../dto/integration-status.dto';
 
 @Injectable()
 export class CoreBackofficeClient {
