@@ -39,6 +39,35 @@ Falls back to safe mock data when cores are unavailable (live/fallback badge sho
 
 ---
 
+## Architecture
+
+Clean Architecture + DDD Tactical with NestJS journey modules under `src/modules/`:
+
+```
+src/modules/
+  dashboard/     → GET /backoffice/dashboard
+  customers/     → GET /backoffice/customers/:id  +  GET /backoffice/customers/:id/points
+  operations/    → GET /backoffice/orders/:orderId
+
+src/shared/
+  infrastructure/   → CoreBackofficeClient, CorePointsClient
+  logging/          → JsonLog
+  metrics/          → Prometheus HTTP middleware
+```
+
+Each journey module follows the same layering:
+
+| Layer | Folder | Responsibility |
+|---|---|---|
+| Presentation | `presentation/` | Controller + request/response DTOs |
+| Application | `application/` | Use cases with `.execute()` method |
+| Domain | `domain/ports/` | TypeScript interface + Symbol DI token |
+| Infrastructure | `infrastructure/adapters/` | Adapter implementing the port |
+
+Dependency injection uses NestJS `@Inject(SYMBOL_TOKEN)` with interface types — no concrete class coupling in use cases.
+
+---
+
 ## Tech stack
 
 - **NestJS 10** (modular architecture)
